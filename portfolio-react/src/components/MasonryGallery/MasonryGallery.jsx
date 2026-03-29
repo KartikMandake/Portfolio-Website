@@ -51,34 +51,20 @@ export default function MasonryGallery({ isAdmin }) {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
 
-  // Fetch gallery settings and photos from Supabase on mount
+  // Fetch gallery settings and photos from local Node.js backend on mount
   const fetchGalleryData = async () => {
-    // 1. Fetch Column Configuration
-    const { data: configData } = await supabase
-      .from('gallery_settings')
-      .select('value')
-      .eq('key', 'gallery_columns')
-      .single();
-
-    if (configData && configData.value) {
-      setColumns(parseInt(configData.value, 10));
-    }
-
-    // 2. Fetch Photos
-    const { data, error } = await supabase
-      .from('photos')
-      .select('*')
-      .order('display_order', { ascending: true });
-
-    if (error) {
-      console.error('Error fetching photos:', error);
-      setImages(SAMPLE_IMAGES);
-      return;
-    }
-
-    if (data && data.length > 0) {
-      setImages(data);
-    } else {
+    try {
+      const res = await fetch('http://localhost:5000/api/gallery');
+      const data = await res.json();
+      
+      if (data.columns) setColumns(data.columns);
+      if (data.images && data.images.length > 0) {
+        setImages(data.images);
+      } else {
+        setImages(SAMPLE_IMAGES);
+      }
+    } catch (error) {
+      console.error('Error fetching backend gallery data:', error);
       setImages(SAMPLE_IMAGES);
     }
   };
@@ -118,8 +104,19 @@ export default function MasonryGallery({ isAdmin }) {
 
     try {
       if (realIds.length > 0) {
-        const { error } = await supabase.from('photos').delete().in('id', realIds);
-        if (error) throw new Error(error.message);
+        const { data: { session } } = await supabase.auth.getSession();
+        const res = await fetch('http://localhost:5000/api/gallery', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session?.access_token}`
+          },
+          body: JSON.stringify({ ids: realIds })
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || 'Failed to delete');
+        }
       }
 
       setImages(prev => prev.filter(img => !selectedIds.has(img.id)));
@@ -138,38 +135,22 @@ export default function MasonryGallery({ isAdmin }) {
     setUploading(true);
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
 
-      const cloudinaryRes = await fetch(
-        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
-        { method: 'POST', body: formData }
-      );
+      const res = await fetch('http://localhost:5000/api/gallery/upload', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session?.access_token}`
+        },
+        body: formData
+      });
       
-      const cloudinaryData = await cloudinaryRes.json();
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Upload failed');
       
-      if (!cloudinaryRes.ok) {
-         throw new Error(`Cloudinary Error: ${cloudinaryData.error?.message || 'Unknown error'}`);
-      }
-
-      if (cloudinaryData.secure_url) {
-        const originalUrl = cloudinaryData.secure_url;
-        const uploadPathIndex = originalUrl.indexOf('/upload/') + 8;
-        const webFriendlyUrl = originalUrl.slice(0, uploadPathIndex) + 'f_auto,q_auto/' + originalUrl.slice(uploadPathIndex);
-
-        const { data, error } = await supabase.from('photos').insert([
-          {
-            cloudinary_url: webFriendlyUrl,
-            alt: file.name,
-            display_order: images.length + 1
-          }
-        ]).select();
-
-        if (error) throw new Error(`Supabase Error: ${error.message}`);
-        
-        setImages(prev => [...prev, data[0]]);
-      }
+      setImages(prev => [...prev, data.image]);
     } catch (err) {
       console.error("Upload failed:", err);
       alert(`Upload Failed!\nReason: ${err.message}`);
@@ -200,25 +181,26 @@ export default function MasonryGallery({ isAdmin }) {
         id: img.id,
         cloudinary_url: img.cloudinary_url,
         alt: img.alt,
-        display_order: index + 1 // Save exactly how they arranged it
+        display_order: index + 1
       };
     });
 
     try {
-      if (updates.length > 0) {
-        const { error } = await supabase.from('photos').upsert(updates);
-        if (error) throw new Error(error.message);
-      }
-
-      // Also save the column setting
-      const { error: configError } = await supabase.from('gallery_settings').upsert({
-        key: 'gallery_columns',
-        value: columns.toString()
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch('http://localhost:5000/api/gallery/publish', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`
+        },
+        body: JSON.stringify({ updates, columns })
       });
-      if (configError) throw new Error(`Failed to save columns setup: ${configError.message}`);
+      
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to publish');
       
       console.log('Successfully published gallery updates.');
-      setMode('view'); // Exit admin mode
+      setMode('view');
     } catch (err) {
       console.error("Failed to publish", err);
       alert(`Publish Failed!\nReason: ${err.message}`);
