@@ -1,0 +1,210 @@
+/* NAVBAR BASE */
+.navbar-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 1.5rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* LOGO */
+.nav-logo {
+  font-family: var(--font-headline, 'Newsreader', serif);
+  font-size: 1.5rem;
+  letter-spacing: 0.1em;
+  font-style: italic;
+  color: #f3f4f6;
+  text-decoration: none;
+  position: relative;
+  z-index: 1001;
+}
+
+.nav-logo span {
+  background: linear-gradient(135deg, #fff 0%, #eabf8d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+}
+
+/* DESKTOP LINKS */
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.nav-link {
+  font-family: var(--font-label, 'Space Grotesk', sans-serif);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  font-weight: 500;
+  color: #9ca3af;
+  text-decoration: none;
+  text-transform: uppercase;
+  position: relative;
+  padding: 0.5rem 0;
+  transition: color 0.3s ease;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 1px;
+  background-color: #eabf8d;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-link:hover {
+  color: #fff;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.nav-link.active {
+  color: #eabf8d;
+}
+
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* CTA BUTTON */
+.nav-cta {
+  font-family: var(--font-label, 'Space Grotesk', sans-serif);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(234, 191, 141, 0.1);
+  border: 1px solid rgba(234, 191, 141, 0.3);
+  padding: 0.6rem 1.4rem;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-cta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+}
+
+.nav-cta:hover {
+  background: rgba(234, 191, 141, 0.25);
+  border-color: #eabf8d;
+  box-shadow: 0 0 15px rgba(234, 191, 141, 0.2);
+}
+
+.nav-cta:hover::before {
+  left: 100%;
+}
+
+/* ACTIONS (CTA + Toggle) */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* MOBILE TOGGLE */
+.mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  z-index: 1001;
+  padding: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.mobile-toggle:hover {
+  transform: scale(1.1);
+}
+
+/* MOBILE MENU OVERLAY */
+.mobile-nav-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(9, 10, 15, 0.98);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.mobile-nav-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mobile-link {
+  font-family: var(--font-headline, 'Newsreader', serif);
+  font-size: 2.5rem;
+  font-style: italic;
+  color: #fff;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  transform: translateY(20px);
+  opacity: 0;
+}
+
+.mobile-nav-overlay.open .mobile-link {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.mobile-nav-overlay.open .mobile-link:nth-child(1) { transition-delay: 0.1s; }
+.mobile-nav-overlay.open .mobile-link:nth-child(2) { transition-delay: 0.2s; }
+.mobile-nav-overlay.open .mobile-link:nth-child(3) { transition-delay: 0.3s; }
+.mobile-nav-overlay.open .mobile-link:nth-child(4) { transition-delay: 0.4s; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+  
+  .nav-cta {
+    display: none;
+  }
+  
+  .mobile-toggle {
+    display: block;
+  }
+  
+  .navbar-container {
+    padding: 1.25rem 1.5rem;
+  }
+}
