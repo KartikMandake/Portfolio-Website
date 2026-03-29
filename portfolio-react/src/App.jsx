@@ -1,16 +1,29 @@
 import React from 'react'
 import Hero from './components/Hero/Hero'
+import MasonryGallery from './components/MasonryGallery/MasonryGallery'
+import AdminAuthModal from './components/AdminAuthModal/AdminAuthModal'
+import useAdminMode from './hooks/useAdminMode'
+
+
 
 function App() {
+  const { isAdmin, showModal, onAuthSuccess, onModalClose } = useAdminMode()
+
   return (
-    <div className="bg-black text-[#F5F5F5]">
-      {/* 
-        This is a boilerplate App container showing the Hero component.
-        You can expand it to add your other Portfolio sections below the Hero.
-      */}
+    <div className="scroll-container">
       <Hero />
+      <MasonryGallery isAdmin={isAdmin} />
+
+      {showModal && (
+        <AdminAuthModal
+          onSuccess={onAuthSuccess}
+          onClose={onModalClose}
+        />
+      )}
     </div>
   )
 }
 
 export default App
+
+
