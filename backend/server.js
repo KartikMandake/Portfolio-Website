@@ -2,6 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const galleryRoutes = require('./routes/gallery');
+const filmsRoutes = require('./routes/films');
+const journalRoutes = require('./routes/journal');
+const aboutRoutes = require('./routes/about');
 
 const app = express();
 
@@ -11,6 +14,9 @@ app.use(express.json());
 
 // Routes
 app.use('/api/gallery', galleryRoutes);
+app.use('/api/films', filmsRoutes);
+app.use('/api/journal', journalRoutes);
+app.use('/api/about', aboutRoutes);
 
 // Base route for health check
 app.get('/', (req, res) => {

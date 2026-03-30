@@ -1,26 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom'
 import { supabase } from './lib/supabase'
-import Hero from './components/Hero/Hero'
+
+// Components
+import Layout from './components/Layout/Layout'
+import LandingPage from './components/LandingPage/LandingPage'
 import MasonryGallery from './components/MasonryGallery/MasonryGallery'
+import Films from './components/Films/Films'
+import Journal from './components/Journal/Journal'
+import AboutPage from './components/About/AboutPage'
 import { useSecretLogin } from './hooks/useSecretLogin'
 import LoginModal from './components/LoginModal'
-
-function Portfolio({ handleSecretTap, isAdmin }) {
-  return (
-    <div className="scroll-container">
-      <Hero />
-      <MasonryGallery isAdmin={isAdmin} />
-      
-      {/* Invisible mobile tap target */}
-      <footer style={{ padding: '20px', textAlign: 'center', opacity: 0.1 }}>
-        <span onTouchStart={handleSecretTap} style={{ userSelect: 'none' }}>
-          © 2024
-        </span>
-      </footer>
-    </div>
-  )
-}
 
 function RequireAuth({ isAdmin }) {
   return isAdmin ? <Outlet /> : <div>Access Denied</div>
@@ -40,13 +30,11 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
-    // Check current session
     supabase.auth.getSession().then(({ data: { session } }) => {
       const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
       setIsAdmin(!!session?.user?.email && !!adminEmail && session.user.email === adminEmail);
     })
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
       setIsAdmin(!!session?.user?.email && !!adminEmail && session.user.email === adminEmail);
@@ -56,22 +44,31 @@ function App() {
   }, [])
 
   return (
-    <>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Portfolio handleSecretTap={handleSecretTap} isAdmin={isAdmin} />} />
+    <Router>
+      <Routes>
+        {/* Landing Page Route with transparent navbar initially */}
+        <Route path="/" element={<Layout handleSecretTap={handleSecretTap} isLanding={true} />}>
+          <Route index element={<LandingPage isAdmin={isAdmin} />} />
+        </Route>
 
-          <Route path="/admin" element={<RequireAuth isAdmin={isAdmin} />}>
-            <Route path="dashboard" element={<Dashboard />} />
-          </Route>
-        </Routes>
+        {/* Global Routes with solid dark navbar immediately */}
+        <Route element={<Layout handleSecretTap={handleSecretTap} isLanding={false} />}>
+          <Route path="/films" element={<Films isAdmin={isAdmin} />} />
+          <Route path="/stills" element={<MasonryGallery isAdmin={isAdmin} id="stills" />} />
+          <Route path="/journal" element={<Journal isAdmin={isAdmin} />} />
+          <Route path="/about" element={<AboutPage isAdmin={isAdmin} />} />
+        </Route>
 
-        {/* Login modal MUST live inside Router so useNavigate() works */}
-        {showLogin && (
-          <LoginModal onClose={() => setShowLogin(false)} />
-        )}
-      </Router>
-    </>
+        {/* Admin Routes */}
+        <Route path="/admin" element={<RequireAuth isAdmin={isAdmin} />}>
+          <Route path="dashboard" element={<Dashboard />} />
+        </Route>
+      </Routes>
+
+      {showLogin && (
+        <LoginModal onClose={() => setShowLogin(false)} />
+      )}
+    </Router>
   )
 }
 

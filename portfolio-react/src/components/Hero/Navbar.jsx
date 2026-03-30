@@ -1,21 +1,28 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import './Navbar.css';
 
-export default function Navbar() {
+export default function Navbar({ isLanding = false }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(!isLanding);
+  const location = useLocation();
 
   useEffect(() => {
+    // If we're not on the landing page, the navbar should always have a dark background.
+    if (!isLanding) {
+      setScrolled(true);
+      return;
+    }
+
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isLanding]);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
-    // Prevent scrolling when menu is open
     document.body.style.overflow = !isMobileMenuOpen ? 'hidden' : 'auto';
   };
 
@@ -25,32 +32,36 @@ export default function Navbar() {
   };
 
   const navLinks = [
-    { name: 'Films', href: '#films' },
-    { name: 'Stills', href: '#stills' },
-    { name: 'Journal', href: '#journal' },
-    { name: 'About', href: '#about' },
+    { name: 'Films', to: '/films' },
+    { name: 'Stills', to: '/stills' },
+    { name: 'Journal', to: '/journal' },
+    { name: 'About', to: '/about' },
   ];
 
   return (
     <>
       <nav className={`navbar-container ${scrolled ? 'scrolled' : ''}`}>
         {/* Logo */}
-        <a href="/" className="nav-logo" onClick={closeMobileMenu}>
+        <Link to="/" className="nav-logo" onClick={closeMobileMenu}>
           <span>Cinematic</span> Buddy
-        </a>
+        </Link>
 
         {/* Desktop Links */}
         <div className="nav-links">
           {navLinks.map((link) => (
-            <a key={link.name} href={link.href} className="nav-link">
+            <Link 
+              key={link.name} 
+              to={link.to} 
+              className={`nav-link ${location.pathname === link.to ? 'active' : ''}`}
+            >
               {link.name}
-            </a>
+            </Link>
           ))}
         </div>
 
         {/* Right Section / CTA */}
         <div className="nav-actions">
-          <button className="nav-cta">Inquiry</button>
+          <Link to="/about" className="nav-cta" style={{textDecoration: 'none'}}>Inquiry</Link>
           
           {/* Mobile Toggle */}
           <button 
@@ -77,16 +88,16 @@ export default function Navbar() {
       {/* Mobile Menu Overlay */}
       <div className={`mobile-nav-overlay ${isMobileMenuOpen ? 'open' : ''}`}>
         {navLinks.map((link) => (
-          <a 
+          <Link 
             key={link.name} 
-            href={link.href} 
+            to={link.to} 
             className="mobile-link"
             onClick={closeMobileMenu}
           >
             {link.name}
-          </a>
+          </Link>
         ))}
-        <button className="nav-cta mt-4" style={{ display: 'block' }}>Inquiry</button>
+        <Link to="/about" className="nav-cta mt-4" style={{ display: 'block', textDecoration: 'none' }} onClick={closeMobileMenu}>Inquiry</Link>
       </div>
     </>
   );

@@ -43,7 +43,14 @@ function SortableItem(props) {
   );
 }
 
-export default function MasonryGallery({ isAdmin }) {
+export default function MasonryGallery({ 
+  isAdmin, 
+  id = "stills",
+  eyebrow = "Selected Works",
+  title = "Film",
+  titleAccent = "board",
+  subtitle = "A curated moodboard of cinematic stills."
+}) {
   const [mode, setMode] = useState('view'); // 'view'|'step1_remove'|'step2_upload'|'step3_arrange'|'step4_preview'
   const [images, setImages] = useState([]);
   const [selectedIds, setSelectedIds] = useState(new Set());
@@ -395,11 +402,11 @@ export default function MasonryGallery({ isAdmin }) {
   );
 
   return (
-    <section className="masonry-section" id="gallery">
+    <section className="masonry-section" id={id}>
       <div className="masonry-header">
-        <p className="masonry-eyebrow">Selected Works</p>
-        <h2 className="masonry-title">Film<span className="masonry-title-accent">board</span></h2>
-        <p className="masonry-subtitle">A curated moodboard of cinematic stills.</p>
+        <p className="masonry-eyebrow">{eyebrow}</p>
+        <h2 className="masonry-title">{title}<span className="masonry-title-accent">{titleAccent}</span></h2>
+        <p className="masonry-subtitle">{subtitle}</p>
       </div>
       
       {mode === 'view' && renderViewMode()}

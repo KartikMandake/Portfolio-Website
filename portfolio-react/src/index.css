@@ -25,7 +25,7 @@ body {
   font-family: "Space Grotesk", sans-serif;
 }
 
-/* ─── Scroll Snap Container ─────────── */
+/* ─── Scroll Container ─────────── */
 .scroll-container {
   height: 100vh;
   overflow-y: scroll;
@@ -33,9 +33,7 @@ body {
   scroll-behavior: smooth;
 }
 
-/* Every direct child section should be full-screen */
-.scroll-container>section {
-  min-height: 100vh;
+/* Make sure all sections snap correctly */
+.scroll-container main section {
   scroll-snap-align: start;
-  scroll-snap-stop: always;
 }

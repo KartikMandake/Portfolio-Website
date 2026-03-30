@@ -8,8 +8,6 @@
   min-height: 100vh;
   background: #090a0f;
   padding: 100px 40px 120px;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
   overflow: hidden;
 }
 

@@ -1,0 +1,121 @@
+/* src/components/About/About.css */
+.about-section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #090a0f; /* Match hero background logic initially */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 4rem 2rem;
+}
+
+.about-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  opacity: 0.04;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.about-content {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+
+.about-title {
+  font-family: var(--font-body, "Space Grotesk", sans-serif);
+  font-size: clamp(2.5rem, 5vw, 5rem);
+  font-weight: 800;
+  color: #fffbdf;
+  margin-bottom: 4rem;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+}
+
+.about-glow {
+  text-shadow:
+    0 0 10px #ffea70,
+    0 0 20px #ffd000,
+    0 0 40px rgba(255, 154, 0, 0.4);
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .about-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.about-text {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  line-height: 1.8;
+  color: #d1d5db;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.about-text p {
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+.about-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.about-image-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  aspect-ratio: 4/5;
+  border-radius: 8px;
+}
+
+.about-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  filter: grayscale(20%) contrast(110%);
+}
+
+.about-image-glow {
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
+  background: radial-gradient(circle at center, rgba(255,200,100,0.15), transparent 70%);
+  z-index: 1;
+  filter: blur(40px);
+  animation: pulseGlow 4s ease-in-out infinite alternate;
+}
+
+@keyframes pulseGlow {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.05); opacity: 1; }
+}
