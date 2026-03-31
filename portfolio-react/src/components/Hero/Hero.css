@@ -138,10 +138,10 @@
 .tagline {
   margin-top: 1.5rem;
   color: #d1d5db;
-  /* softer than pure white */
   font-size: clamp(1.3rem, 2.5vw, 1.9rem);
   letter-spacing: 1px;
-  font-weight: 300;
+  font-weight: 600;
+  /* increased for bold effect */
   line-height: 1.6;
   font-family: 'Playfair Display', serif;
   font-style: italic;

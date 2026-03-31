@@ -160,10 +160,10 @@ export default function Films({ isAdmin }) {
       
       {/* 1. SECION: FULLSCREEN HERO */}
       <section className="films-hero">
-        {/* Cinematic Placeholder Video (Autoplay, Loop, Muted) */}
+        {/* Cinematic Background Video (Autoplay, Loop, Muted) */}
         <video 
           className="hero-video-bg"
-          src="https://res.cloudinary.com/demo/video/upload/v1689252345/elephants.mp4" 
+          src="/hero_film.mp4" 
           autoPlay 
           muted 
           loop 
@@ -182,10 +182,10 @@ export default function Films({ isAdmin }) {
       {/* 2. SECTION: CONTENT (ROWS) */}
       <section className="films-content">
         
-        {/* Admin Section Overrides - Light Theme styled */}
+        {/* Admin Section Overrides - Dark Theme styled */}
         {isAdmin && (
           <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 5%' }}>
-            <div className="admin-toolbar admin-toolbar-light" style={{ padding: '1rem', borderRadius: '8px', display: 'flex' }}>
+            <div className="admin-toolbar admin-toolbar-dark" style={{ padding: '1rem', borderRadius: '8px', display: 'flex' }}>
               <p className="admin-status" style={{ flex: 1, fontWeight: 'bold' }}>Films Database Settings</p>
               <button onClick={() => setIsAdding(!isAdding)} className="btn-admin-primary">
                 {isAdding ? 'Cancel' : '➕ Add Film'}
@@ -193,7 +193,7 @@ export default function Films({ isAdmin }) {
             </div>
 
             {isAdding && (
-              <form onSubmit={handleAddSubmit} className="admin-form-light" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '1.5rem', borderRadius: '8px' }}>
+              <form onSubmit={handleAddSubmit} className="admin-form-dark" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '1.5rem', borderRadius: '8px' }}>
                 <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem' }}>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
                     <input 
@@ -224,7 +224,7 @@ export default function Films({ isAdmin }) {
                     ref={fileInputRef} 
                     onChange={handleFileChange}
                     required 
-                    className="film-input-light"
+                    className="film-input-dark"
                     style={{ padding: '0.5rem' }}
                   />
                 ) : (
@@ -234,7 +234,7 @@ export default function Films({ isAdmin }) {
                     value={videoUrl} 
                     onChange={e => setVideoUrl(e.target.value)} 
                     required 
-                    className="film-input-light"
+                    className="film-input-dark"
                     style={{ padding: '0.75rem' }}
                   />
                 )}
@@ -244,7 +244,7 @@ export default function Films({ isAdmin }) {
                   placeholder="Title / Description (optional)" 
                   value={alt} 
                   onChange={e => setAlt(e.target.value)} 
-                  className="film-input-light"
+                  className="film-input-dark"
                   style={{ padding: '0.75rem' }}
                 />
                 <button type="submit" className="btn-admin-primary" disabled={uploading}>
