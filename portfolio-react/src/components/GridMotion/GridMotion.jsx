@@ -30,11 +30,11 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
 
     const updateMotion = () => {
       if (!inViewRef.current) return; // Immediately yield heavy processing if off-screen
-      
+
       // Faster and larger reaction 
-      const maxMoveAmount = 400; // Increased from 300 to travel more
-      const baseDuration = 0.4; // Decreased from 0.8 to snap faster
-      const inertiaFactors = [0.3, 0.2, 0.15, 0.1]; // Decreased inertia to make it more responsive
+      const maxMoveAmount = 80; // Increased from 300 to travel more
+      const baseDuration = 4.0; // Decreased from 0.8 to snap faster
+      const inertiaFactors = [3, 2.5, 2, 1.5]; // Decreased inertia to make it more responsive
 
       rowRefs.current.forEach((row, index) => {
         if (row) {
