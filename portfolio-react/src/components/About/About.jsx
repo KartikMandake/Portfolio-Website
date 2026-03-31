@@ -1,21 +1,53 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
+import './AboutAdmin.css';
 import './About.css';
 
 export default function About({ isAdmin }) {
   const [isEditing, setIsEditing] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const fileInputRef = useRef(null);
+  
+  // Section & Animation Refs
+  const [visibleSections, setVisibleSections] = useState(new Set());
+  const sectionRef = useRef(null);
+  const lensRef = useRef(null);
 
   const [aboutData, setAboutData] = useState({
-    greeting: 'About the Artist',
-    paragraph1: "Hey there! I'm a passionate photographer exploring the world one frame at a time. My journey began with a simple camera and a profound desire to freeze fleeting moments into eternal memories. Over the years, I've honed my craft to specialize in cinematic, mood-driven photography that tells a compelling story.",
-    paragraph2: "I believe that every face, every landscape, and every shadow holds a narrative waiting to be unraveled. With a keen eye for light and composition, my goal is to capture the essence of my subjects and evoke genuine emotions through my art.",
-    image_url: '/herobackground.png'
+    greeting: "It starts with nothing.",
+    paragraph1: "Cinematic Buddy is built on intention.",
+    paragraph2: "Every story is composed.",
+    image_url: '/herobackground.png' 
   });
 
   const [editForm, setEditForm] = useState({ ...aboutData });
   const [selectedFile, setSelectedFile] = useState(null);
+
+  /* ---------- IntersectionObserver for 4 Narrative Blocks ---------- */
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setVisibleSections(prev => new Set([...prev, entry.target.id]));
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    const blocks = sectionRef.current?.querySelectorAll('.narrative-block');
+    blocks?.forEach(block => observer.observe(block));
+
+    return () => observer.disconnect();
+  }, []);
+
+  /* ---------- Interactive Lens Light Follower ---------- */
+  const handleMouseMove = (e) => {
+    if (!lensRef.current) return;
+    const { clientX, clientY } = e;
+    const { left, top } = sectionRef.current.getBoundingClientRect();
+    lensRef.current.style.transform = `translate(${clientX - left}px, ${clientY - top}px)`;
+  };
 
   const fetchAbout = async () => {
     try {
@@ -34,16 +66,6 @@ export default function About({ isAdmin }) {
     fetchAbout();
   }, []);
 
-  const handleEditClick = () => {
-    setIsEditing(true);
-    setEditForm({ ...aboutData });
-    setSelectedFile(null);
-  };
-
-  const handleCancelClick = () => {
-    setIsEditing(false);
-  };
-
   const handleSaveClick = async () => {
     setUploading(true);
     try {
@@ -54,143 +76,149 @@ export default function About({ isAdmin }) {
       formData.append('paragraph2', editForm.paragraph2);
       formData.append('current_image_url', aboutData.image_url);
       
-      if (selectedFile) {
-        formData.append('file', selectedFile);
-      }
+      if (selectedFile) formData.append('file', selectedFile);
 
       const res = await fetch('http://localhost:5000/api/about', {
         method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${session?.access_token}`
-        },
+        headers: { 'Authorization': `Bearer ${session?.access_token}` },
         body: formData
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to update about section');
+      if (!res.ok) throw new Error(data.error || 'Failed to update section');
 
       setAboutData(data.about);
-      setEditForm(data.about);
       setIsEditing(false);
     } catch (err) {
-      console.error("Save failed:", err);
-      alert(`Save Failed!\nReason: ${err.message}`);
+      alert(`Save Failed: ${err.message}`);
     } finally {
       setUploading(false);
     }
   };
 
-  const handleFileChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
-    }
-  };
-
-  const getGreetingParts = (greeting) => {
-    const parts = greeting.split(' ');
-    if (parts.length > 1) {
-      const lastWord = parts.pop();
-      return { rest: parts.join(' '), last: lastWord };
-    }
-    return { rest: greeting, last: '' };
-  };
-
-  const { rest, last } = getGreetingParts(isEditing ? editForm.greeting : aboutData.greeting);
-
   return (
-    <section className="about-section" id="about">
-      {isAdmin && !isEditing && (
-        <div className="admin-toolbar" style={{ margin: '0 auto 2rem', maxWidth: '1200px' }}>
-          <p className="admin-status" style={{ flex: 1 }}>About Section Settings</p>
-          <button onClick={handleEditClick} className="btn-edit">
-            ✏️ Edit About
-          </button>
+    <section 
+      className="about-elevation" 
+      id="about" 
+      ref={sectionRef}
+      onMouseMove={handleMouseMove}
+    >
+      
+      {/* Interactive Lens Overlay */}
+      <div className="lens-light" ref={lensRef} />
+
+      {/* Atmospheric Background Layer */}
+      <div className="atmospheric-bg">
+        <span className="bg-parallax-text">STORY</span>
+      </div>
+
+      {/* Admin Controls: Contextual & Right-Aligned */}
+      {isAdmin && (
+        <div className="about-inline-admin">
+          {!isEditing ? (
+            <button onClick={() => setIsEditing(true)} className="btn-edit">
+              ✏️ Manage Story
+            </button>
+          ) : (
+            <div className="admin-panel">
+              <button onClick={() => setIsEditing(false)} disabled={uploading}>Cancel</button>
+              <button onClick={handleSaveClick} disabled={uploading} className="btn-primary">
+                {uploading ? 'Saving...' : 'Save Narrative'}
+              </button>
+            </div>
+          )}
         </div>
       )}
 
-      {isAdmin && isEditing && (
-        <div className="admin-toolbar sticky" style={{ margin: '0 auto 2rem', maxWidth: '1200px' }}>
-          <p className="step-title">Editing About Section</p>
-          <div className="admin-actions">
-            <button onClick={handleCancelClick} className="btn-cancel" disabled={uploading}>Cancel</button>
-            <button onClick={handleSaveClick} className="btn-publish" disabled={uploading}>
-              {uploading ? '⏳ Saving...' : '💾 Save Changes'}
-            </button>
+      {/* BLOCK 1: HERO STATEMENT (Hook) */}
+      <div className={`narrative-block block-hero ${visibleSections.has('block-1') ? 'visible' : ''}`} id="block-1">
+        <div className="block-content centered">
+          <h1 className="hero-statement-text apple-type">{aboutData.greeting}</h1>
+          <div className="gold-metal-tag shimmer">
+            <span className="tag-inner">Every feeling deserves to be remembered</span>
           </div>
         </div>
-      )}
+      </div>
 
-      <div className="about-content">
-        {isEditing ? (
-          <div className="about-grid">
-            <div className="about-text" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <input 
-                value={editForm.greeting} 
-                onChange={(e) => setEditForm({...editForm, greeting: e.target.value})} 
-                className="edit-input" 
-                style={{ fontSize: '2rem', padding: '0.5rem', background: 'transparent', color: '#fff', border: '1px solid #333', borderRadius: '4px' }}
-                placeholder="Greeting (e.g., About the Artist)"
+      {/* BLOCK 2: EDITORIAL STACK (Vertical Philosophy) */}
+      <div className={`narrative-block block-philosophy ${visibleSections.has('block-2') ? 'visible' : ''}`} id="block-2">
+        <div className="block-content">
+          <div className="editorial-stack">
+            {['Light', 'Motion', 'Composition', 'Emotion'].map((pillar) => (
+              <div key={pillar} className="editorial-item">
+                <span className="editorial-word">{pillar}</span>
+                <div className="editorial-line" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* BLOCK 3: VISUAL SPLIT (Masterpiece) */}
+      <div className={`narrative-block block-visual ${visibleSections.has('block-3') ? 'visible' : ''}`} id="block-3">
+        <div className="block-content visual-section">
+          
+          <div className="visual-text">
+            <h2 className="split-heading apple-type">
+              Not created.<br/>
+              <span className="accent-hero">Composed.</span>
+            </h2>
+            <div className="split-divider" />
+            <p className="split-sub">Cinematic Buddy is built on intention. We don't just capture visuals; we craft experiences that linger in the mind long after the screen fades.</p>
+          </div>
+
+          <div className="visual-image">
+            <div className="master-frame-container ken-burns">
+              <img 
+                src={selectedFile ? URL.createObjectURL(selectedFile) : (isEditing ? editForm.image_url : aboutData.image_url)} 
+                alt="Cinematic Masterpiece" 
+                className="master-frame-img"
               />
+              <div className="master-rim-light" />
+              {isEditing && (
+                <div className="upload-overlay">
+                  <input type="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
+                  <span>Update Master Frame</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* BLOCK 4: MINDSET & SIGNATURE (Structured) */}
+      <div className={`narrative-block block-mindset ${visibleSections.has('block-4') ? 'visible' : ''}`} id="block-4">
+        <div className="block-content centered">
+          <h2 className="mindset-title apple-type">"This is how I see the world."</h2>
+          
+          {isEditing ? (
+            <div className="edit-narrative-fields">
               <textarea 
                 value={editForm.paragraph1} 
                 onChange={(e) => setEditForm({...editForm, paragraph1: e.target.value})} 
-                rows="6"
-                style={{ padding: '0.5rem', background: 'transparent', color: '#ccc', border: '1px solid #333', borderRadius: '4px', width: '100%', resize: 'vertical' }}
-                placeholder="Paragraph 1"
+                placeholder="Core Vision"
               />
               <textarea 
                 value={editForm.paragraph2} 
                 onChange={(e) => setEditForm({...editForm, paragraph2: e.target.value})} 
-                rows="6"
-                style={{ padding: '0.5rem', background: 'transparent', color: '#ccc', border: '1px solid #333', borderRadius: '4px', width: '100%', resize: 'vertical' }}
-                placeholder="Paragraph 2"
+                placeholder="The Methodology"
               />
             </div>
-            
-            <div className="about-image-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-              <div className="about-image-wrapper">
-                <div className="about-image-glow"></div>
-                <img 
-                  src={selectedFile ? URL.createObjectURL(selectedFile) : editForm.image_url} 
-                  alt="The Photographer" 
-                  className="about-image" 
-                />
-              </div>
-              <input 
-                type="file" 
-                accept="image/*" 
-                ref={fileInputRef} 
-                style={{ display: 'none' }} 
-                onChange={handleFileChange}
-              />
-              <button 
-                onClick={() => fileInputRef.current?.click()} 
-                style={{ padding: '0.5rem 1rem', background: '#222', color: '#fff', border: '1px solid #444', borderRadius: '4px', cursor: 'pointer' }}
-              >
-                Change Image
-              </button>
+          ) : (
+            <div className="mindset-statements">
+              <p className="mindset-line">{aboutData.paragraph1}</p>
+              <p className="mindset-line">{aboutData.paragraph2}</p>
             </div>
+          )}
+
+          <div className="narrative-signature elevation-sig">
+            <div className="sig-line-gold" />
+            <p className="sig-text">— Cinematic Buddy</p>
           </div>
-        ) : (
-          <>
-            <h2 className="about-title">{rest} <span className="about-glow">{last}</span></h2>
-            
-            <div className="about-grid">
-              <div className="about-text">
-                <p>{aboutData.paragraph1}</p>
-                {aboutData.paragraph2 && <p>{aboutData.paragraph2}</p>}
-              </div>
-              
-              <div className="about-image-container">
-                <div className="about-image-wrapper">
-                  <div className="about-image-glow"></div>
-                  <img src={aboutData.image_url} alt="The Photographer" className="about-image" />
-                </div>
-              </div>
-            </div>
-          </>
-        )}
+        </div>
       </div>
+
     </section>
   );
 }
