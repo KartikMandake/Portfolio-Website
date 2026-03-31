@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Navbar.css';
+import ShinyText from '../ShinyText/ShinyText';
 
 export default function Navbar({ isLanding = false }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -43,7 +44,14 @@ export default function Navbar({ isLanding = false }) {
       <nav className={`navbar-container ${scrolled ? 'scrolled' : ''}`}>
         {/* Logo */}
         <Link to="/" className="nav-logo" onClick={closeMobileMenu}>
-          <span>Cinematic</span> Buddy
+          <ShinyText 
+            text="Cinematic Buddy" 
+            disabled={false} 
+            speed={3} 
+            className="logo-shiny" 
+            color="#eabf8d" 
+            shineColor="#ffffff" 
+          />
         </Link>
 
         {/* Desktop Links */}

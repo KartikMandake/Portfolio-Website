@@ -2,7 +2,7 @@
 .hero {
   position: relative;
   height: 100vh;
-  background: #090a0f url('/herobackground.png') center/cover no-repeat;
+  background: #090a0f;
   overflow: hidden;
   display: flex;
   align-items: center;
