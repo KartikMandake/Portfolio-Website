@@ -8,7 +8,7 @@ import LandingPage from './components/LandingPage/LandingPage'
 import MasonryGallery from './components/MasonryGallery/MasonryGallery'
 import Films from './components/Films/Films'
 import Journal from './components/Journal/Journal'
-import AboutPage from './components/About/AboutPage'
+import AboutPage from './components/About/About'
 import { useSecretLogin } from './hooks/useSecretLogin'
 import LoginModal from './components/LoginModal'
 

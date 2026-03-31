@@ -5,17 +5,39 @@ import './About.css';
 export default function About({ isAdmin }) {
   const [isEditing, setIsEditing] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const fileInputRef = useRef(null);
+  
+  // Scene visibility states
+  const [visibleScenes, setVisibleScenes] = useState(new Set());
+  const sectionRef = useRef(null);
 
   const [aboutData, setAboutData] = useState({
-    greeting: 'About the Artist',
-    paragraph1: "Hey there! I'm a passionate photographer exploring the world one frame at a time. My journey began with a simple camera and a profound desire to freeze fleeting moments into eternal memories. Over the years, I've honed my craft to specialize in cinematic, mood-driven photography that tells a compelling story.",
-    paragraph2: "I believe that every face, every landscape, and every shadow holds a narrative waiting to be unraveled. With a keen eye for light and composition, my goal is to capture the essence of my subjects and evoke genuine emotions through my art.",
-    image_url: '/herobackground.png'
+    greeting: "It starts with nothing.",
+    paragraph1: "Cinematic Buddy is not created.",
+    paragraph2: "It is composed.",
+    image_url: '/herobackground.png' // This will be the Single Flagship Frame
   });
 
   const [editForm, setEditForm] = useState({ ...aboutData });
   const [selectedFile, setSelectedFile] = useState(null);
+
+  /* ---------- IntersectionObserver for 6 scenes ---------- */
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setVisibleScenes(prev => new Set([...prev, entry.target.id]));
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    const scenes = sectionRef.current?.querySelectorAll('.timeline-scene');
+    scenes?.forEach(scene => observer.observe(scene));
+
+    return () => observer.disconnect();
+  }, []);
 
   const fetchAbout = async () => {
     try {
@@ -34,16 +56,6 @@ export default function About({ isAdmin }) {
     fetchAbout();
   }, []);
 
-  const handleEditClick = () => {
-    setIsEditing(true);
-    setEditForm({ ...aboutData });
-    setSelectedFile(null);
-  };
-
-  const handleCancelClick = () => {
-    setIsEditing(false);
-  };
-
   const handleSaveClick = async () => {
     setUploading(true);
     try {
@@ -54,143 +66,131 @@ export default function About({ isAdmin }) {
       formData.append('paragraph2', editForm.paragraph2);
       formData.append('current_image_url', aboutData.image_url);
       
-      if (selectedFile) {
-        formData.append('file', selectedFile);
-      }
+      if (selectedFile) formData.append('file', selectedFile);
 
       const res = await fetch('http://localhost:5000/api/about', {
         method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${session?.access_token}`
-        },
+        headers: { 'Authorization': `Bearer ${session?.access_token}` },
         body: formData
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to update about section');
+      if (!res.ok) throw new Error(data.error || 'Failed to update story');
 
       setAboutData(data.about);
-      setEditForm(data.about);
       setIsEditing(false);
     } catch (err) {
-      console.error("Save failed:", err);
-      alert(`Save Failed!\nReason: ${err.message}`);
+      alert(`Save Failed: ${err.message}`);
     } finally {
       setUploading(false);
     }
   };
 
-  const handleFileChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
-    }
-  };
-
-  const getGreetingParts = (greeting) => {
-    const parts = greeting.split(' ');
-    if (parts.length > 1) {
-      const lastWord = parts.pop();
-      return { rest: parts.join(' '), last: lastWord };
-    }
-    return { rest: greeting, last: '' };
-  };
-
-  const { rest, last } = getGreetingParts(isEditing ? editForm.greeting : aboutData.greeting);
-
   return (
-    <section className="about-section" id="about">
-      {isAdmin && !isEditing && (
-        <div className="admin-toolbar" style={{ margin: '0 auto 2rem', maxWidth: '1200px' }}>
-          <p className="admin-status" style={{ flex: 1 }}>About Section Settings</p>
-          <button onClick={handleEditClick} className="btn-edit">
-            ✏️ Edit About
-          </button>
+    <section className="about-timeline" id="about" ref={sectionRef}>
+      
+      {/* Admin Controls */}
+      {isAdmin && (
+        <div className="timeline-admin-overlay">
+          {!isEditing ? (
+            <button onClick={() => setIsEditing(true)} className="btn-timeline-edit">✏️ Edit Story</button>
+          ) : (
+            <div className="admin-panel">
+              <button onClick={() => setIsEditing(false)} disabled={uploading}>Cancel</button>
+              <button onClick={handleSaveClick} disabled={uploading}>
+                {uploading ? 'Saving...' : 'Save Story'}
+              </button>
+            </div>
+          )}
         </div>
       )}
 
-      {isAdmin && isEditing && (
-        <div className="admin-toolbar sticky" style={{ margin: '0 auto 2rem', maxWidth: '1200px' }}>
-          <p className="step-title">Editing About Section</p>
-          <div className="admin-actions">
-            <button onClick={handleCancelClick} className="btn-cancel" disabled={uploading}>Cancel</button>
-            <button onClick={handleSaveClick} className="btn-publish" disabled={uploading}>
-              {uploading ? '⏳ Saving...' : '💾 Save Changes'}
-            </button>
+      {/* SCENE 1: THE EMPTY START */}
+      <div className={`timeline-scene scene-empty ${visibleScenes.has('scene-1') ? 'scene-visible' : ''}`} id="scene-1">
+        <div className="scene-focal-text">
+          {isEditing ? (
+            <input 
+              value={editForm.greeting} 
+              onChange={(e) => setEditForm({...editForm, greeting: e.target.value})}
+              className="edit-input-minimal"
+            />
+          ) : (
+            <p className="minimal-statement">{aboutData.greeting}</p>
+          )}
+        </div>
+      </div>
+
+      {/* SCENE 2: FIRST LIGHT */}
+      <div className={`timeline-scene scene-light ${visibleScenes.has('scene-2') ? 'scene-visible' : ''}`} id="scene-2">
+        <div className="scene-glow-atmos" aria-hidden="true" />
+        <div className="scene-focal-text">
+          <p className="minimal-statement italic">Then... a feeling.</p>
+        </div>
+      </div>
+
+      {/* SCENE 3: THE BUILD */}
+      <div className={`timeline-scene scene-build ${visibleScenes.has('scene-3') ? 'scene-visible' : ''}`} id="scene-3">
+        <div className="build-sequence">
+          <span className="build-word">Light</span>
+          <span className="build-arrow">→</span>
+          <span className="build-word">Motion</span>
+          <span className="build-arrow">→</span>
+          <span className="build-word">Composition</span>
+          <span className="build-arrow">→</span>
+          <span className="build-word">Emotion</span>
+        </div>
+      </div>
+
+      {/* SCENE 4: THE VISUAL (Flagship Frame) */}
+      <div className={`timeline-scene scene-visual ${visibleScenes.has('scene-4') ? 'scene-visible' : ''}`} id="scene-4">
+        <div className="flagship-container">
+          <div className={`flagship-frame ${visibleScenes.has('scene-4') ? 'frame-emerge' : ''}`}>
+            <img 
+              src={selectedFile ? URL.createObjectURL(selectedFile) : (isEditing ? editForm.image_url : aboutData.image_url)} 
+              alt="Cinematic Flagship Frame" 
+              className="flagship-img"
+            />
+            <div className="flagship-rim-light" />
+            {isEditing && (
+              <div className="upload-overlay">
+                <input type="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
+                <span>Choose Master Frame</span>
+              </div>
+            )}
           </div>
         </div>
-      )}
+      </div>
 
-      <div className="about-content">
-        {isEditing ? (
-          <div className="about-grid">
-            <div className="about-text" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <input 
-                value={editForm.greeting} 
-                onChange={(e) => setEditForm({...editForm, greeting: e.target.value})} 
-                className="edit-input" 
-                style={{ fontSize: '2rem', padding: '0.5rem', background: 'transparent', color: '#fff', border: '1px solid #333', borderRadius: '4px' }}
-                placeholder="Greeting (e.g., About the Artist)"
-              />
+      {/* SCENE 5: THE MINDSET */}
+      <div className={`timeline-scene scene-mindset ${visibleScenes.has('scene-5') ? 'scene-visible' : ''}`} id="scene-5">
+        <div className="mindset-content">
+          <h2 className="mindset-statement">"This is how I see the world."</h2>
+          {isEditing ? (
+            <div className="edit-mindset-form">
               <textarea 
                 value={editForm.paragraph1} 
                 onChange={(e) => setEditForm({...editForm, paragraph1: e.target.value})} 
-                rows="6"
-                style={{ padding: '0.5rem', background: 'transparent', color: '#ccc', border: '1px solid #333', borderRadius: '4px', width: '100%', resize: 'vertical' }}
-                placeholder="Paragraph 1"
               />
               <textarea 
                 value={editForm.paragraph2} 
                 onChange={(e) => setEditForm({...editForm, paragraph2: e.target.value})} 
-                rows="6"
-                style={{ padding: '0.5rem', background: 'transparent', color: '#ccc', border: '1px solid #333', borderRadius: '4px', width: '100%', resize: 'vertical' }}
-                placeholder="Paragraph 2"
               />
             </div>
-            
-            <div className="about-image-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-              <div className="about-image-wrapper">
-                <div className="about-image-glow"></div>
-                <img 
-                  src={selectedFile ? URL.createObjectURL(selectedFile) : editForm.image_url} 
-                  alt="The Photographer" 
-                  className="about-image" 
-                />
-              </div>
-              <input 
-                type="file" 
-                accept="image/*" 
-                ref={fileInputRef} 
-                style={{ display: 'none' }} 
-                onChange={handleFileChange}
-              />
-              <button 
-                onClick={() => fileInputRef.current?.click()} 
-                style={{ padding: '0.5rem 1rem', background: '#222', color: '#fff', border: '1px solid #444', borderRadius: '4px', cursor: 'pointer' }}
-              >
-                Change Image
-              </button>
-            </div>
-          </div>
-        ) : (
-          <>
-            <h2 className="about-title">{rest} <span className="about-glow">{last}</span></h2>
-            
-            <div className="about-grid">
-              <div className="about-text">
-                <p>{aboutData.paragraph1}</p>
-                {aboutData.paragraph2 && <p>{aboutData.paragraph2}</p>}
-              </div>
-              
-              <div className="about-image-container">
-                <div className="about-image-wrapper">
-                  <div className="about-image-glow"></div>
-                  <img src={aboutData.image_url} alt="The Photographer" className="about-image" />
-                </div>
-              </div>
-            </div>
-          </>
-        )}
+          ) : (
+            <p className="mindset-sub">
+              {aboutData.paragraph1} <br />
+              {aboutData.paragraph2}
+            </p>
+          )}
+        </div>
       </div>
+
+      {/* SCENE 6: SIGNATURE */}
+      <div className={`timeline-scene scene-signature ${visibleScenes.has('scene-6') ? 'scene-visible' : ''}`} id="scene-6">
+        <div className="signature-glow-line" />
+        <p className="signature-branding">— Cinematic Buddy</p>
+      </div>
+
     </section>
   );
 }

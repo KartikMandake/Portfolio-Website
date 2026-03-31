@@ -1,0 +1,350 @@
+/* ========================================================
+   SCREEN 2 — THE REALIZATION MOMENT (CONSOLIDATED)
+   Composition: Text + Horizontal Reel on a Single Page
+   ======================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400&display=swap');
+
+/* ─── Section Shell ─────────────────────────────────────── */
+.realization-section {
+  position: relative;
+  height: 100vh;
+  /* Strictly one page */
+  background: linear-gradient(180deg, #090a0f 0%, #0d0e14 50%, #090a0f 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* ─── Atmosphere ─── */
+.rm-grain {
+  position: absolute;
+  inset: 0;
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  opacity: 0.07;
+  z-index: 1;
+  pointer-events: none;
+  animation: grainShift 0.15s steps(1) infinite;
+}
+
+@keyframes grainShift {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  100% {
+    transform: translate(1px, 1px);
+  }
+}
+
+.rm-spotlight {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle, rgba(255, 180, 60, 0.03) 0%, transparent 75%);
+  filter: blur(80px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.rm-light-leak {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 210, 80, 0.15), transparent);
+  opacity: 0.3;
+  z-index: 2;
+}
+
+/* ─── Consolidated Composition ─── */
+.rm-composition {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1400px;
+}
+
+/* ─── Text Block ─── */
+.rm-text-block {
+  text-align: center;
+  max-width: 800px;
+  /* narrowed for better center focus */
+  padding: 0 2rem;
+  margin-bottom: 4.5rem;
+  /* Increased to accommodate the new glow position */
+  transform: translateY(60px);
+  /* tight, intentional spacing */
+}
+
+.rm-main-line,
+.rm-secondary {
+  opacity: 0;
+  transform: translateY(15px);
+  /* subtler entrance */
+  transition: opacity 1.5s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.rm-visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.rm-main-line {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  /* compact for single page */
+  font-weight: 400;
+  font-style: italic;
+  color: rgba(255, 248, 220, 0.95);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  margin: 0;
+  text-shadow: 0 0 40px rgba(255, 210, 100, 0.1);
+}
+
+.rm-emphasis {
+  margin-top: 0.5rem;
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  color: rgba(255, 248, 220, 0.8);
+  transition-delay: 0.2s;
+}
+
+.rm-secondary {
+  margin-top: 2rem;
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(0.7rem, 1vw, 0.85rem);
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(180, 185, 196, 0.4);
+  line-height: 1.8;
+  transition-delay: 0.4s;
+}
+
+/* ─── Connector ─── */
+.rm-connector-glow {
+  width: 100px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(200, 168, 75, 0.2), transparent);
+  margin: 1.5rem auto 0;
+  /* Centered with small top margin */
+  opacity: 0;
+  transition: opacity 2s ease;
+}
+
+.rm-glow-visible {
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HORIZONTAL FILM REEL (AUTO-SCROLL)
+   ═══════════════════════════════════════════════════════════ */
+
+.rm-reel-wrapper {
+  position: relative;
+  width: 100vw;
+  opacity: 0;
+  /* margin-top: 60px; */
+  transform: translateY(80px);
+  transition: opacity 1.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.rm-reel-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.rm-reel-edge {
+  width: 100%;
+  height: 20px;
+  background: #090a0f;
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 5;
+}
+
+.rm-reel-edge--top {
+  border-bottom: 1px solid rgba(255, 200, 80, 0.08);
+}
+
+.rm-reel-edge--bottom {
+  border-top: 1px solid rgba(255, 200, 80, 0.08);
+}
+
+.rm-perfs {
+  display: flex;
+  gap: 20px;
+  padding: 0 10px;
+  width: max-content;
+  animation: perfScroll 60s linear infinite; /* Synced with reelScrollAuto */
+}
+
+.rm-perf {
+  width: 8px;
+  height: 10px;
+  background: #111218;
+  border: 1px solid rgba(255, 200, 80, 0.04);
+  border-radius: 1px;
+  opacity: 0.8;
+  filter: blur(0.2px); /* slight cinematic bleed */
+}
+
+@keyframes perfScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.rm-reel-track {
+  background: #0b0c12;
+  padding: 2.5rem 0;
+  /* balanced for single page */
+  overflow: hidden;
+  position: relative;
+}
+
+.rm-reel-strip {
+  display: flex;
+  gap: 20px;
+  width: max-content;
+  animation: reelScrollAuto 60s linear infinite;
+  /* constant cinematic motion */
+}
+
+@keyframes reelScrollAuto {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.rm-frame {
+  position: relative;
+  width: clamp(220px, 22vw, 340px);
+  /* Elegant sizing */
+  aspect-ratio: 16 / 9;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 200, 80, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transition: transform 0.6s ease;
+}
+
+.rm-frame:hover {
+  transform: scale(1.03);
+}
+
+.rm-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.7) contrast(1.1);
+  transition: filter 0.6s ease;
+}
+
+.rm-frame:hover img {
+  filter: brightness(0.9);
+}
+
+.rm-frame-tint {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(200, 168, 75, 0.05), transparent);
+  pointer-events: none;
+}
+
+.rm-frame-glow {
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+/* Side Vignettes */
+.rm-reel-vignette {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 25%;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.rm-reel-vignette--left {
+  left: 0;
+  background: linear-gradient(to right, #090a0f 0%, transparent 100%);
+}
+
+.rm-reel-vignette--right {
+  right: 0;
+  background: linear-gradient(to left, #090a0f 0%, transparent 100%);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1024px) {
+  .rm-main-line {
+    font-size: 2.2rem;
+  }
+
+  .rm-frame {
+    width: 260px;
+  }
+}
+
+@media (max-width: 768px) {
+  .rm-main-line {
+    font-size: 1.8rem;
+  }
+
+  .rm-emphasis {
+    font-size: 1.4rem;
+  }
+
+  .rm-frame {
+    width: 200px;
+  }
+
+  .rm-reel-track {
+    padding: 1.5rem 0;
+  }
+
+  .rm-connector-glow {
+    margin-bottom: 4rem;
+  }
+}
+
+@media (max-height: 600px) {
+  .rm-text-block {
+    margin-bottom: 1rem;
+  }
+
+  .rm-main-line {
+    font-size: 1.5rem;
+  }
+
+  .rm-emphasis {
+    font-size: 1.2rem;
+  }
+
+  .rm-frame {
+    width: 180px;
+  }
+
+  .rm-reel-track {
+    padding: 1rem 0;
+  }
+}

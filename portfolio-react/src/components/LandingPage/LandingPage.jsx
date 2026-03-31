@@ -1,5 +1,6 @@
 import React from 'react';
 import Hero from '../Hero/Hero';
+import RealizationMoment from '../RealizationMoment/RealizationMoment';
 import About from '../About/About';
 import MasonryGallery from '../MasonryGallery/MasonryGallery';
 
@@ -7,7 +8,7 @@ export default function LandingPage({ isAdmin }) {
   return (
     <>
       <Hero />
-      <About isAdmin={isAdmin} />
+      <RealizationMoment />
       {/* Featured Section */}
       <MasonryGallery 
         isAdmin={isAdmin} 
@@ -17,6 +18,7 @@ export default function LandingPage({ isAdmin }) {
         titleAccent="Stills"
         subtitle="A snapshot of our finest cinematic captures."
       />
+      <About isAdmin={isAdmin} />
     </>
   );
 }
