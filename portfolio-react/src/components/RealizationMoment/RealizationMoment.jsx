@@ -57,18 +57,27 @@ export default function RealizationMoment({ isAdmin }) {
     setUploading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('No active session. Please login again.');
+      }
+
       const formData = new FormData();
       formData.append('file', file);
 
+      console.log('Final Uploading to:', 'http://localhost:5000/api/realization/upload');
       const res = await fetch('http://localhost:5000/api/realization/upload', {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${session?.access_token}` },
+        headers: { 'Authorization': `Bearer ${session.access_token}` },
         body: formData
       });
 
-      if (!res.ok) throw new Error('Upload failed');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Upload failed');
+      
+      console.log('Upload Success:', data);
       fetchFrames();
     } catch (err) {
+      console.error('Upload Error Details:', err);
       alert(`Upload Failed: ${err.message}`);
     } finally {
       setUploading(false);
@@ -80,18 +89,27 @@ export default function RealizationMoment({ isAdmin }) {
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('No active session. Please login again.');
+      }
+
+      console.log('Deleting frame:', id);
       const res = await fetch('http://localhost:5000/api/realization', {
         method: 'DELETE',
         headers: { 
-          'Authorization': `Bearer ${session?.access_token}`,
+          'Authorization': `Bearer ${session.access_token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ ids: [id] })
       });
 
-      if (!res.ok) throw new Error('Delete failed');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Delete failed');
+      
+      console.log('Delete Success');
       fetchFrames();
     } catch (err) {
+      console.error('Delete Error Details:', err);
       alert(`Delete Failed: ${err.message}`);
     }
   };

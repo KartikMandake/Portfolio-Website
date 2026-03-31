@@ -6,7 +6,7 @@ import './About.css';
 export default function About({ isAdmin }) {
   const [isEditing, setIsEditing] = useState(false);
   const [uploading, setUploading] = useState(false);
-  
+
   // Section & Animation Refs
   const [visibleSections, setVisibleSections] = useState(new Set());
   const sectionRef = useRef(null);
@@ -16,13 +16,13 @@ export default function About({ isAdmin }) {
     greeting: "It starts with nothing.",
     paragraph1: "Cinematic Buddy is built on intention.",
     paragraph2: "Every story is composed.",
-    image_url: '/herobackground.png' 
+    image_url: '/herobackground.png'
   });
 
   const [editForm, setEditForm] = useState({ ...aboutData });
   const [selectedFile, setSelectedFile] = useState(null);
 
-  /* ---------- IntersectionObserver for 4 Narrative Blocks ---------- */
+  /* ---------- IntersectionObserver for Narrative Blocks ---------- */
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -75,7 +75,7 @@ export default function About({ isAdmin }) {
       formData.append('paragraph1', editForm.paragraph1);
       formData.append('paragraph2', editForm.paragraph2);
       formData.append('current_image_url', aboutData.image_url);
-      
+
       if (selectedFile) formData.append('file', selectedFile);
 
       const res = await fetch('http://localhost:5000/api/about', {
@@ -97,13 +97,13 @@ export default function About({ isAdmin }) {
   };
 
   return (
-    <section 
-      className="about-elevation" 
-      id="about" 
+    <section
+      className="about-elevation"
+      id="about"
       ref={sectionRef}
       onMouseMove={handleMouseMove}
     >
-      
+
       {/* Interactive Lens Overlay */}
       <div className="lens-light" ref={lensRef} />
 
@@ -140,27 +140,14 @@ export default function About({ isAdmin }) {
         </div>
       </div>
 
-      {/* BLOCK 2: EDITORIAL STACK (Vertical Philosophy) */}
-      <div className={`narrative-block block-philosophy ${visibleSections.has('block-2') ? 'visible' : ''}`} id="block-2">
-        <div className="block-content">
-          <div className="editorial-stack">
-            {['Light', 'Motion', 'Composition', 'Emotion'].map((pillar) => (
-              <div key={pillar} className="editorial-item">
-                <span className="editorial-word">{pillar}</span>
-                <div className="editorial-line" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
 
-      {/* BLOCK 3: VISUAL SPLIT (Masterpiece) */}
-      <div className={`narrative-block block-visual ${visibleSections.has('block-3') ? 'visible' : ''}`} id="block-3">
+      {/* BLOCK 2: VISUAL SPLIT (Masterpiece) */}
+      <div className={`narrative-block block-visual ${visibleSections.has('block-2') ? 'visible' : ''}`} id="block-2">
         <div className="block-content visual-section">
-          
+
           <div className="visual-text">
             <h2 className="split-heading apple-type">
-              Not created.<br/>
+              Not created.<br />
               <span className="accent-hero">Composed.</span>
             </h2>
             <div className="split-divider" />
@@ -169,9 +156,9 @@ export default function About({ isAdmin }) {
 
           <div className="visual-image">
             <div className="master-frame-container ken-burns">
-              <img 
-                src={selectedFile ? URL.createObjectURL(selectedFile) : (isEditing ? editForm.image_url : aboutData.image_url)} 
-                alt="Cinematic Masterpiece" 
+              <img
+                src={selectedFile ? URL.createObjectURL(selectedFile) : (isEditing ? editForm.image_url : aboutData.image_url)}
+                alt="Cinematic Masterpiece"
                 className="master-frame-img"
               />
               <div className="master-rim-light" />
@@ -187,21 +174,21 @@ export default function About({ isAdmin }) {
         </div>
       </div>
 
-      {/* BLOCK 4: MINDSET & SIGNATURE (Structured) */}
-      <div className={`narrative-block block-mindset ${visibleSections.has('block-4') ? 'visible' : ''}`} id="block-4">
+      {/* BLOCK 3: MINDSET & SIGNATURE (Structured) */}
+      <div className={`narrative-block block-mindset ${visibleSections.has('block-3') ? 'visible' : ''}`} id="block-3">
         <div className="block-content centered">
           <h2 className="mindset-title apple-type">"This is how I see the world."</h2>
-          
+
           {isEditing ? (
             <div className="edit-narrative-fields">
-              <textarea 
-                value={editForm.paragraph1} 
-                onChange={(e) => setEditForm({...editForm, paragraph1: e.target.value})} 
+              <textarea
+                value={editForm.paragraph1}
+                onChange={(e) => setEditForm({ ...editForm, paragraph1: e.target.value })}
                 placeholder="Core Vision"
               />
-              <textarea 
-                value={editForm.paragraph2} 
-                onChange={(e) => setEditForm({...editForm, paragraph2: e.target.value})} 
+              <textarea
+                value={editForm.paragraph2}
+                onChange={(e) => setEditForm({ ...editForm, paragraph2: e.target.value })}
                 placeholder="The Methodology"
               />
             </div>
