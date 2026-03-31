@@ -8,7 +8,7 @@ export default function LandingPage({ isAdmin }) {
   return (
     <>
       <Hero />
-      <RealizationMoment />
+      <RealizationMoment isAdmin={isAdmin} />
       {/* Featured Section */}
       <MasonryGallery 
         isAdmin={isAdmin} 
