@@ -137,16 +137,12 @@
 /* TAGLINE */
 .tagline {
   margin-top: 1.5rem;
-
-  color: rgba(255, 215, 130, 0.95);
-  /* richer gold, better contrast */
-
-  font-size: clamp(1.4rem, 2.2vw, 2rem);
-  /* slightly bigger for readability */
-
-  letter-spacing: 1.5px;
-  /* more breathing space */
-
+  color: #d1d5db;
+  font-size: clamp(1.3rem, 2.5vw, 1.9rem);
+  letter-spacing: 1px;
+  font-weight: 600;
+  /* increased for bold effect */
+  line-height: 1.6;
   font-family: 'Playfair Display', serif;
   font-style: italic;
   font-weight: bold;
