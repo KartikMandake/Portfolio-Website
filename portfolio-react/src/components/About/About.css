@@ -146,57 +146,7 @@
   to { background-position: 200% center; }
 }
 
-/* ─── BLOCK 2: EDITORIAL STACK (Vertical List) ───────────── */
-
-.block-philosophy {
-  padding: 10rem 0;
-}
-
-.editorial-stack {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-}
-
-.editorial-item {
-  position: relative;
-  width: 100%;
-  max-width: 600px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-}
-
-.editorial-word {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(2.5rem, 6vw, 4rem);
-  color: var(--about-text);
-  opacity: 0.3;
-  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-  letter-spacing: 0.05em;
-}
-
-.editorial-item:hover .editorial-word {
-  opacity: 1;
-  color: var(--about-accent);
-  transform: translateX(20px);
-}
-
-.editorial-line {
-  width: 0;
-  height: 1px;
-  background: var(--about-accent);
-  transition: width 0.6s ease;
-  margin-top: 0.5rem;
-}
-
-.editorial-item:hover .editorial-line {
-  width: 80px;
-}
-
-/* ─── BLOCK 3: VISUAL SPLIT (Ken Burns) ───────────── */
+/* ─── BLOCK 2: VISUAL SPLIT (Ken Burns) ───────────── */
 
 .visual-section {
   display: grid;
@@ -265,7 +215,7 @@
 /* ─── BLOCK 4: MINDSET & SIGNATURE ──────────────── */
 
 .block-mindset {
-  padding-bottom: 15rem;
+  padding-bottom: 20rem;
 }
 
 .mindset-title {
