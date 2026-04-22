@@ -37,7 +37,7 @@ export default function RealizationMoment({ isAdmin }) {
   }, []);
 
   const fetchFrames = () => {
-    fetch('http://localhost:5000/api/realization')
+    fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/realization')
       .then(r => r.json())
       .then(data => {
         const imgs = data.frames && data.frames.length > 0 ? data.frames : FALLBACK_FRAMES;
@@ -64,8 +64,8 @@ export default function RealizationMoment({ isAdmin }) {
       const formData = new FormData();
       formData.append('file', file);
 
-      console.log('Final Uploading to:', 'http://localhost:5000/api/realization/upload');
-      const res = await fetch('http://localhost:5000/api/realization/upload', {
+      console.log('Final Uploading to:', (import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/realization/upload');
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/realization/upload', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${session.access_token}` },
         body: formData
@@ -94,7 +94,7 @@ export default function RealizationMoment({ isAdmin }) {
       }
 
       console.log('Deleting frame:', id);
-      const res = await fetch('http://localhost:5000/api/realization', {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/realization', {
         method: 'DELETE',
         headers: { 
           'Authorization': `Bearer ${session.access_token}`,

@@ -22,7 +22,7 @@ export default function Films({ isAdmin }) {
 
   const fetchFilms = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/films');
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/films');
       const data = await res.json();
       if (data.films) setFilms(data.films);
     } catch (error) {
@@ -74,7 +74,7 @@ export default function Films({ isAdmin }) {
         formData.append('file', videoFile);
         formData.append('alt', alt);
         
-        res = await fetch('http://localhost:5000/api/films/upload', {
+        res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/films/upload', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${session?.access_token}`
@@ -82,7 +82,7 @@ export default function Films({ isAdmin }) {
           body: formData
         });
       } else {
-        res = await fetch('http://localhost:5000/api/films', {
+        res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/films', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -114,7 +114,7 @@ export default function Films({ isAdmin }) {
     if (!window.confirm("Delete this film?")) return;
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch('http://localhost:5000/api/films', {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/films', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

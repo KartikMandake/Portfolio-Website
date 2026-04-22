@@ -18,7 +18,7 @@ export default function CollageReveal() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/gallery")
+    fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/gallery')
       .then((res) => res.json())
       .then((data) => {
         if (data.images && data.images.length > 0) {

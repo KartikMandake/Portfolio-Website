@@ -51,7 +51,7 @@ export default function About({ isAdmin }) {
 
   const fetchAbout = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/about');
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/about');
       const data = await res.json();
       if (data.about) {
         setAboutData(data.about);
@@ -78,7 +78,7 @@ export default function About({ isAdmin }) {
 
       if (selectedFile) formData.append('file', selectedFile);
 
-      const res = await fetch('http://localhost:5000/api/about', {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/about', {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${session?.access_token}` },
         body: formData

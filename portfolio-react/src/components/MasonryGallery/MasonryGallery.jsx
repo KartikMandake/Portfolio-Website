@@ -61,7 +61,7 @@ export default function MasonryGallery({
   // Fetch gallery settings and photos from local Node.js backend on mount
   const fetchGalleryData = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/gallery');
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/gallery');
       const data = await res.json();
       
       if (data.columns) setColumns(data.columns);
@@ -112,7 +112,7 @@ export default function MasonryGallery({
     try {
       if (realIds.length > 0) {
         const { data: { session } } = await supabase.auth.getSession();
-        const res = await fetch('http://localhost:5000/api/gallery', {
+        const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/gallery', {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -146,7 +146,7 @@ export default function MasonryGallery({
       const formData = new FormData();
       formData.append('file', file);
 
-      const res = await fetch('http://localhost:5000/api/gallery/upload', {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/gallery/upload', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${session?.access_token}`
@@ -194,7 +194,7 @@ export default function MasonryGallery({
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch('http://localhost:5000/api/gallery/publish', {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/gallery/publish', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
