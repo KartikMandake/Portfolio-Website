@@ -67,7 +67,7 @@ export default function Journal({ isAdmin }) {
     if (!window.confirm("Delete this journal entry?")) return;
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api/journal/${id}', {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:5000') + `/api/journal/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${session?.access_token}`

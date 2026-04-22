@@ -74,7 +74,7 @@ export default function Navbar({ isLanding = false, isAdmin = false }) {
               onClick={async () => {
                 const { supabase } = await import('../../lib/supabase');
                 await supabase.auth.signOut();
-                window.location.reload();
+                window.location.href = '/';
               }}
               style={{ background: 'transparent', color: '#fff', border: '1px solid rgba(255,255,255,0.3)', padding: '0.5rem 1rem', borderRadius: '4px', cursor: 'pointer', fontFamily: 'var(--font-label)', letterSpacing: '0.05em', fontSize: '0.8rem' }}
             >
@@ -123,7 +123,7 @@ export default function Navbar({ isLanding = false, isAdmin = false }) {
             onClick={async () => {
               const { supabase } = await import('../../lib/supabase');
               await supabase.auth.signOut();
-              window.location.reload();
+              window.location.href = '/';
             }}
             className="mobile-link"
             style={{ background: 'transparent', border: 'none', color: '#dc2626', marginTop: '1rem', cursor: 'pointer', paddingBottom: '0' }}
