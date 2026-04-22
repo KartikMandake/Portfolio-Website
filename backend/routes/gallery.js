@@ -26,7 +26,14 @@ router.get('/', async (req, res) => {
       .select('*')
       .order('display_order', { ascending: true });
 
-    if (error) console.error("Error fetching photos", error);
+    if (error) {
+      if (error.code === 'PGRST204' || error.code === 'PGRST205' || error.message?.includes('schema cache')) {
+        console.warn("Gallery tables missing, returning sample images.");
+        return res.json({ images: [], columns: 3 });
+      }
+      console.error("Error fetching photos", error);
+      return res.json({ images: [], columns: 3 });
+    }
 
     res.json({ images: images || [], columns });
   } catch (error) {

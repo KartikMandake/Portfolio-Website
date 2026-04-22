@@ -7,7 +7,7 @@ import Layout from './components/Layout/Layout'
 import LandingPage from './components/LandingPage/LandingPage'
 import MasonryGallery from './components/MasonryGallery/MasonryGallery'
 import Films from './components/Films/Films'
-import Journal from './components/Journal/Journal'
+import Categories from './components/Categories/categories'
 import AboutPage from './components/About/About'
 import { useSecretLogin } from './hooks/useSecretLogin'
 import LoginModal from './components/LoginModal'
@@ -55,7 +55,7 @@ function App() {
         <Route element={<Layout handleSecretTap={handleSecretTap} isLanding={false} />}>
           <Route path="/films" element={<Films isAdmin={isAdmin} />} />
           <Route path="/stills" element={<MasonryGallery isAdmin={isAdmin} id="stills" />} />
-          <Route path="/journal" element={<Journal isAdmin={isAdmin} />} />
+          <Route path="/categories" element={<Categories isAdmin={isAdmin} />} />
           <Route path="/about" element={<AboutPage isAdmin={isAdmin} />} />
         </Route>
 

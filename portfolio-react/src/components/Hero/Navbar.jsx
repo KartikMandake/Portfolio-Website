@@ -35,7 +35,7 @@ export default function Navbar({ isLanding = false }) {
   const navLinks = [
     { name: 'Films', to: '/films' },
     { name: 'Stills', to: '/stills' },
-    { name: 'Journal', to: '/journal' },
+    { name: 'Categories', to: '/categories' },
     { name: 'About', to: '/about' },
   ];
 
@@ -44,22 +44,22 @@ export default function Navbar({ isLanding = false }) {
       <nav className={`navbar-container ${scrolled ? 'scrolled' : ''}`}>
         {/* Logo */}
         <Link to="/" className="nav-logo" onClick={closeMobileMenu}>
-          <ShinyText 
-            text="Cinematic Buddy" 
-            disabled={false} 
-            speed={3} 
-            className="logo-shiny" 
-            color="#eabf8d" 
-            shineColor="#ffffff" 
+          <ShinyText
+            text="Cinematic Buddy"
+            disabled={false}
+            speed={3}
+            className="logo-shiny"
+            color="#eabf8d"
+            shineColor="#ffffff"
           />
         </Link>
 
         {/* Desktop Links */}
         <div className="nav-links">
           {navLinks.map((link) => (
-            <Link 
-              key={link.name} 
-              to={link.to} 
+            <Link
+              key={link.name}
+              to={link.to}
               className={`nav-link ${location.pathname === link.to ? 'active' : ''}`}
             >
               {link.name}
@@ -69,11 +69,11 @@ export default function Navbar({ isLanding = false }) {
 
         {/* Right Section / CTA */}
         <div className="nav-actions">
-          <Link to="/about" className="nav-cta" style={{textDecoration: 'none'}}>Inquiry</Link>
-          
+          <Link to="/about" className="nav-cta" style={{ textDecoration: 'none' }}>Inquiry</Link>
+
           {/* Mobile Toggle */}
-          <button 
-            className="mobile-toggle" 
+          <button
+            className="mobile-toggle"
             onClick={toggleMobileMenu}
             aria-label="Toggle Menu"
           >
@@ -96,9 +96,9 @@ export default function Navbar({ isLanding = false }) {
       {/* Mobile Menu Overlay */}
       <div className={`mobile-nav-overlay ${isMobileMenuOpen ? 'open' : ''}`}>
         {navLinks.map((link) => (
-          <Link 
-            key={link.name} 
-            to={link.to} 
+          <Link
+            key={link.name}
+            to={link.to}
             className="mobile-link"
             onClick={closeMobileMenu}
           >

@@ -18,6 +18,10 @@ router.get('/', async (req, res) => {
       .order('created_at', { ascending: false });
 
     if (error) {
+      if (error.code === 'PGRST204' || error.code === 'PGRST205' || error.message?.includes('schema cache')) {
+        console.warn("Journal table missing, returning empty array.");
+        return res.json({ entries: [] });
+      }
       console.error("Error fetching journal entries:", error);
       return res.json({ entries: [] });
     }
