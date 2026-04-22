@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import ShinyText from '../ShinyText/ShinyText';
 
@@ -7,6 +7,7 @@ export default function Navbar({ isLanding = false, isAdmin = false }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(!isLanding);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     // If we're not on the landing page, the navbar should always have a dark background.
@@ -74,7 +75,7 @@ export default function Navbar({ isLanding = false, isAdmin = false }) {
               onClick={async () => {
                 const { supabase } = await import('../../lib/supabase');
                 await supabase.auth.signOut();
-                window.location.href = '/';
+                navigate('/');
               }}
               style={{ background: 'transparent', color: '#fff', border: '1px solid rgba(255,255,255,0.3)', padding: '0.5rem 1rem', borderRadius: '4px', cursor: 'pointer', fontFamily: 'var(--font-label)', letterSpacing: '0.05em', fontSize: '0.8rem' }}
             >
@@ -123,7 +124,7 @@ export default function Navbar({ isLanding = false, isAdmin = false }) {
             onClick={async () => {
               const { supabase } = await import('../../lib/supabase');
               await supabase.auth.signOut();
-              window.location.href = '/';
+              navigate('/');
             }}
             className="mobile-link"
             style={{ background: 'transparent', border: 'none', color: '#dc2626', marginTop: '1rem', cursor: 'pointer', paddingBottom: '0' }}
