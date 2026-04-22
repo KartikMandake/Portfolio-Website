@@ -59,3 +59,54 @@ USING (true);
 INSERT INTO public.about_content (id, greeting, paragraph1, paragraph2, image_url, name, email, phone, instagram, behance, twitter) 
 VALUES (1, 'About the Artist', 'Hey there! I am a passionate photographer exploring the world one frame at a time.', 'I believe that every face, every landscape, and every shadow holds a narrative waiting to be unraveled.', '/herobackground.png', 'Kartik', 'hello@example.com', '', '', '', '')
 ON CONFLICT (id) DO NOTHING;
+
+-- 4. Realization Moments Table
+CREATE TABLE IF NOT EXISTS public.realization_moments (
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    cloudinary_url text NOT NULL,
+    alt text,
+    display_order integer DEFAULT 0,
+    created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Enable RLS and create public view policy
+ALTER TABLE public.realization_moments ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public profiles are viewable by everyone."
+ON public.realization_moments FOR SELECT
+TO public
+USING (true);
+
+-- 5. Photos (Gallery) Table
+CREATE TABLE IF NOT EXISTS public.photos (
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    cloudinary_url text NOT NULL,
+    alt text,
+    display_order integer DEFAULT 0,
+    created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Enable RLS and create public view policy
+ALTER TABLE public.photos ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public profiles are viewable by everyone."
+ON public.photos FOR SELECT
+TO public
+USING (true);
+
+-- 6. Gallery Settings Table
+CREATE TABLE IF NOT EXISTS public.gallery_settings (
+    key text PRIMARY KEY,
+    value text NOT NULL,
+    updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Enable RLS and create public view policy
+ALTER TABLE public.gallery_settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public profiles are viewable by everyone."
+ON public.gallery_settings FOR SELECT
+TO public
+USING (true);
+
+-- Insert default gallery columns
+INSERT INTO public.gallery_settings (key, value)
+VALUES ('gallery_columns', '3')
+ON CONFLICT (key) DO NOTHING;
