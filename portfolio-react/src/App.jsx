@@ -47,12 +47,12 @@ function App() {
     <Router>
       <Routes>
         {/* Landing Page Route with transparent navbar initially */}
-        <Route path="/" element={<Layout handleSecretTap={handleSecretTap} isLanding={true} />}>
+        <Route path="/" element={<Layout handleSecretTap={handleSecretTap} isLanding={true} isAdmin={isAdmin} />}>
           <Route index element={<LandingPage isAdmin={isAdmin} />} />
         </Route>
 
         {/* Global Routes with solid dark navbar immediately */}
-        <Route element={<Layout handleSecretTap={handleSecretTap} isLanding={false} />}>
+        <Route element={<Layout handleSecretTap={handleSecretTap} isLanding={false} isAdmin={isAdmin} />}>
           <Route path="/films" element={<Films isAdmin={isAdmin} />} />
           <Route path="/stills" element={<MasonryGallery isAdmin={isAdmin} id="stills" />} />
           <Route path="/journal" element={<Journal isAdmin={isAdmin} />} />

@@ -132,11 +132,15 @@
   padding: 4rem 0 8rem;
   position: relative;
   z-index: 11;
+  background-image: url("/bg-film.png");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 
 /* NETFLIX ROWS */
 .film-row-section {
-  margin-bottom: 4rem;
+  margin-bottom: 2rem;
   padding-left: 5%;
 }
 

@@ -2,11 +2,11 @@ import React from 'react';
 import Navbar from '../Hero/Navbar';
 import { Outlet } from 'react-router-dom';
 
-export default function Layout({ handleSecretTap, isLanding }) {
+export default function Layout({ handleSecretTap, isLanding, isAdmin }) {
   return (
     <div className="scroll-container">
       {/* We pass isLanding so Navbar knows if it should have a solid bg immediately or not */}
-      <Navbar isLanding={isLanding} />
+      <Navbar isLanding={isLanding} isAdmin={isAdmin} />
       
       <main style={{ minHeight: '100vh' }}>
         <Outlet />

@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import './Navbar.css';
 import ShinyText from '../ShinyText/ShinyText';
 
-export default function Navbar({ isLanding = false }) {
+export default function Navbar({ isLanding = false, isAdmin = false }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(!isLanding);
   const location = useLocation();
@@ -68,7 +68,19 @@ export default function Navbar({ isLanding = false }) {
         </div>
 
         {/* Right Section / CTA */}
-        <div className="nav-actions">
+        <div className="nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          {isAdmin && (
+            <button 
+              onClick={async () => {
+                const { supabase } = await import('../../lib/supabase');
+                await supabase.auth.signOut();
+                window.location.reload();
+              }}
+              style={{ background: 'transparent', color: '#fff', border: '1px solid rgba(255,255,255,0.3)', padding: '0.5rem 1rem', borderRadius: '4px', cursor: 'pointer', fontFamily: 'var(--font-label)', letterSpacing: '0.05em', fontSize: '0.8rem' }}
+            >
+              Log Out
+            </button>
+          )}
           <Link to="/about" className="nav-cta" style={{textDecoration: 'none'}}>Inquiry</Link>
           
           {/* Mobile Toggle */}
@@ -106,6 +118,19 @@ export default function Navbar({ isLanding = false }) {
           </Link>
         ))}
         <Link to="/about" className="nav-cta mt-4" style={{ display: 'block', textDecoration: 'none' }} onClick={closeMobileMenu}>Inquiry</Link>
+        {isAdmin && (
+          <button 
+            onClick={async () => {
+              const { supabase } = await import('../../lib/supabase');
+              await supabase.auth.signOut();
+              window.location.reload();
+            }}
+            className="mobile-link"
+            style={{ background: 'transparent', border: 'none', color: '#dc2626', marginTop: '1rem', cursor: 'pointer', paddingBottom: '0' }}
+          >
+            Log Out (Admin)
+          </button>
+        )}
       </div>
     </>
   );

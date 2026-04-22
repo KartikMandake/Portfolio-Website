@@ -225,16 +225,6 @@ export default function MasonryGallery({
           <p className="admin-status">Admin Mode: Active</p>
           <div className="admin-actions">
             <button 
-              onClick={async () => {
-                const { supabase } = await import('../../lib/supabase');
-                await supabase.auth.signOut();
-                window.location.reload();
-              }} 
-              className="btn-cancel"
-            >
-              Log Out
-            </button>
-            <button 
               onClick={() => { 
                 setMode('step1_remove'); 
                 setSelectedIds(new Set()); 
