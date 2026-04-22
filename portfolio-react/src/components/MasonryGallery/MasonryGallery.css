@@ -8,8 +8,6 @@
   min-height: 100vh;
   background: #090a0f;
   padding: 100px 40px 120px;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
   overflow: hidden;
 }
 
@@ -82,68 +80,22 @@
   line-height: 1.7;
 }
 
-/* ── Drop hint bar ───────────────────────────────────────── */
-.masonry-drop-hint {
+/* ── React Masonry CSS Integration ───────────────────────── */
+.masonry-grid {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  border: 1px dashed rgba(200, 168, 75, 0.25);
-  border-radius: 8px;
-  padding: 14px 24px;
-  margin: 0 auto 40px;
-  max-width: 420px;
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 0.8rem;
-  letter-spacing: 2px;
-  color: rgba(200, 168, 75, 0.5);
-  transition: all 0.3s ease;
+  margin-left: -14px; /* Gutter size offset */
+  width: auto;
   position: relative;
   z-index: 2;
-  cursor: default;
-  user-select: none;
 }
 
-.masonry-drop-hint.active,
-.masonry-drop-hint:hover {
-  border-color: rgba(200, 168, 75, 0.7);
-  color: #c8a84b;
-  background: rgba(200, 168, 75, 0.06);
+.masonry-column {
+  padding-left: 14px; /* Gutter size */
+  background-clip: padding-box;
 }
 
-.drop-icon {
-  font-size: 1.1rem;
-  animation: dropBob 1.8s ease-in-out infinite;
-}
-
-@keyframes dropBob {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(4px); }
-}
-
-/* ── Columns container ───────────────────────────────────── */
-.masonry-columns {
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-  position: relative;
-  z-index: 2;
-  transition: outline 0.2s ease;
-}
-
-.masonry-columns.drag-over {
-  outline: 2px dashed rgba(200, 168, 75, 0.5);
-  outline-offset: 12px;
-  border-radius: 4px;
-}
-
-/* ── Individual column ───────────────────────────────────── */
-.masonry-col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  min-width: 0;
+.masonry-column > div {
+  margin-bottom: 14px;
 }
 
 /* ── Image card ──────────────────────────────────────────── */
@@ -153,22 +105,22 @@
   overflow: hidden;
   background: #111217;
   cursor: pointer;
-
-  /* Fade-in initial state */
   opacity: 0;
   transform: translateY(24px) scale(0.98);
   transition:
     opacity 0.65s ease,
     transform 0.65s ease,
     box-shadow 0.45s ease;
-
-  /* Subtle random offsets are added via inline delay in JSX */
 }
 
-/* Triggered by IntersectionObserver */
 .masonry-item.visible {
   opacity: 1;
   transform: translateY(0) scale(1);
+}
+
+.masonry-item.visible.selectable {
+  /* No transform bounce for selectable states */
+  transition: border 0.2s, box-shadow 0.2s;
 }
 
 .masonry-item img {
@@ -180,8 +132,48 @@
   filter: brightness(0.88) saturate(0.9);
 }
 
+/* ── Select Mode / Checkboxes ────────────────────────────── */
+.selectable {
+  border: 2px solid transparent;
+}
+.selectable.selected {
+  border: 2px solid #c8a84b;
+  box-shadow: 0 0 15px rgba(200, 168, 75, 0.3);
+}
+
+.selectable.selected img {
+  filter: brightness(1) saturate(1.1);
+}
+
+.select-overlay {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+}
+
+.checkbox {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 2px solid rgba(255,255,255,0.5);
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: transparent;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.checkbox.checked {
+  background: #c8a84b;
+  border-color: #c8a84b;
+  color: #000;
+}
+
 /* ── Hover state ─────────────────────────────────────────── */
-.masonry-item:hover {
+.masonry-item:not(.selectable):not(.arrange-item):hover {
   box-shadow:
     0 0 0 1px rgba(200, 168, 75, 0.35),
     0 0 18px rgba(200, 168, 75, 0.25),
@@ -190,12 +182,12 @@
   z-index: 10;
 }
 
-.masonry-item:hover img {
+.masonry-item:not(.selectable):not(.arrange-item):hover img {
   transform: scale(1.045);
   filter: brightness(1) saturate(1.05);
 }
 
-/* ── Overlay (shown on hover) ────────────────────────────── */
+/* ── Overlay (shown on hover in View mode) ───────────────── */
 .masonry-overlay {
   position: absolute;
   inset: 0;
@@ -230,7 +222,6 @@
   transform: translateY(0);
 }
 
-/* Golden glow ring that appears on hover */
 .masonry-glow-ring {
   position: absolute;
   inset: 0;
@@ -245,16 +236,212 @@
   opacity: 1;
 }
 
+/* ── ARRANGE GRID (Step 2) ───────────────────────────────── */
+.arrange-grid {
+  display: grid;
+  gap: 14px;
+  position: relative;
+  z-index: 2;
+}
+
+.arrange-item {
+  opacity: 1;
+  transform: none;
+  z-index: 10;
+  touch-action: none;
+}
+
+.arrange-item img {
+  height: 200px; /* Fixed height for arrange mode grid */
+  object-fit: contain;
+  background: #111217;
+}
+
+.arrange-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.3);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.arrange-item:hover .arrange-overlay {
+  opacity: 1;
+}
+
+.drag-handle {
+  font-size: 24px;
+  color: white;
+  background: rgba(0,0,0,0.7);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: grab;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.drag-hint {
+  text-align: center;
+  color: #9ca3af;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+/* ── Admin Toolbars ──────────────────────────────────────── */
+.admin-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(15, 16, 22, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(200, 168, 75, 0.3);
+  border-radius: 8px;
+  padding: 16px 24px;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 20;
+}
+
+.admin-toolbar.sticky {
+  position: sticky;
+  top: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.admin-status {
+  color: #c8a84b;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: bold;
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.step-title {
+  color: white;
+  font-weight: bold;
+  font-family: "Space Grotesk", sans-serif;
+}
+
+.col-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #9ca3af;
+}
+
+.col-btn {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid transparent;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.col-btn.active {
+  border-color: #c8a84b;
+  background: rgba(200, 168, 75, 0.2);
+}
+
+.admin-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.admin-toolbar button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-edit {
+  background: transparent;
+  color: #c8a84b;
+  border: 1px solid #c8a84b;
+}
+
+.btn-edit:hover {
+  background: rgba(200, 168, 75, 0.1);
+}
+
+.btn-cancel {
+  background: transparent;
+  color: #9ca3af;
+  border: 1px solid #9ca3af;
+}
+
+.btn-cancel:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.btn-upload {
+  background: #2a2d36;
+  color: #c8a84b;
+  border: 1px solid #c8a84b;
+}
+
+.btn-upload:hover {
+  background: #3b3f4a;
+}
+
+.btn-danger {
+  background: transparent;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+}
+
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.btn-primary, .btn-publish {
+  background: #c8a84b;
+  color: #000;
+  border: none;
+}
+
+.btn-primary:hover, .btn-publish:hover {
+  background: #e6c869;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 768px) {
   .masonry-section {
     padding: 80px 20px 100px;
   }
-  .masonry-columns {
-    gap: 10px;
+  .masonry-grid {
+    margin-left: -10px;
   }
-  .masonry-col {
-    gap: 10px;
+  .masonry-column {
+    padding-left: 10px;
+  }
+  .masonry-column > div {
+    margin-bottom: 10px;
+  }
+  .admin-toolbar {
+    flex-direction: column;
+    gap: 16px;
   }
 }
 

@@ -1,0 +1,283 @@
+/* src/components/About/About.css */
+
+:root {
+  --about-bg: #0f1115;
+  --about-text: #fffbdf;
+  --about-accent: #c8a84b;
+  --about-accent-bright: #e6d08f;
+  --about-accent-soft: rgba(200, 168, 75, 0.15);
+  --section-pad: 8rem;
+  --gap-large: 6rem;
+}
+
+.about-elevation {
+  position: relative;
+  width: 100%;
+  background-color: var(--about-bg);
+  color: var(--about-text);
+  overflow: hidden;
+  font-family: var(--font-body, "Space Grotesk", sans-serif);
+  cursor: none; /* Hide cursor for lens effect */
+}
+
+/* ─── INTERACTIVE LENS LIGHT ─────────────────────────── */
+
+.lens-light {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(200, 168, 75, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 50;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: screen;
+  transition: transform 0.1s ease-out;
+}
+
+/* ─── ATMOSPHERIC BACKGROUND (STORY) ────────────────────────── */
+
+.atmospheric-bg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.bg-parallax-text {
+  font-size: 25vw;
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  color: #fff;
+  opacity: 0.02;
+  letter-spacing: 0.1em;
+  user-select: none;
+}
+
+/* ─── NARRATIVE BLOCK ─────────────────────────── */
+
+.narrative-block {
+  padding: var(--section-pad);
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1.8s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 1.8s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  z-index: 10;
+}
+
+.narrative-block.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.block-content {
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.centered {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ─── BLOCK 1: HERO STATEMENT (Apple Type + Metal) ─────────────── */
+
+.block-hero {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.apple-type {
+  font-family: 'Playfair Display', serif;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+}
+
+.hero-statement-text {
+  font-size: clamp(2.5rem, 6vw, 4.8rem);
+  line-height: 1.1;
+  color: var(--about-text);
+  margin-bottom: 2.5rem;
+}
+
+.gold-metal-tag {
+  display: inline-block;
+  background: linear-gradient(135deg, #c8a84b 0%, #e6d08f 50%, #c8a84b 100%);
+  color: #0f1115;
+  padding: 0.8rem 1.8rem;
+  border-radius: 2px;
+  box-shadow: 0 4px 30px rgba(200, 168, 75, 0.2), inset 0 0 15px rgba(255, 255, 255, 0.3);
+  opacity: 0;
+  transform: translateY(15px);
+  transition: all 1s ease 0.6s;
+}
+
+.visible .gold-metal-tag {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tag-inner {
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* ─── SHIMMER ANIMATION ─── */
+.shimmer {
+  background-size: 200% auto;
+  animation: shimmerAnim 4s linear infinite;
+}
+
+@keyframes shimmerAnim {
+  to { background-position: 200% center; }
+}
+
+/* ─── BLOCK 2: VISUAL SPLIT (Ken Burns) ───────────── */
+
+.visual-section {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  align-items: center;
+  gap: 10rem;
+}
+
+.accent-hero {
+  color: var(--about-accent);
+  font-weight: 700;
+}
+
+.split-heading {
+  font-size: clamp(2.2rem, 5vw, 4.2rem);
+  line-height: 1.1;
+}
+
+.split-divider {
+  width: 60px;
+  height: 1px;
+  background: var(--about-accent);
+  margin: 2.5rem 0;
+}
+
+.split-sub {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: rgba(255, 251, 223, 0.5);
+  max-width: 500px;
+}
+
+.master-frame-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(200, 168, 75, 0.2);
+}
+
+.ken-burns .master-frame-img {
+  animation: kenBurnsAnim 15s ease-in-out infinite alternate;
+}
+
+@keyframes kenBurnsAnim {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.08); }
+}
+
+.master-frame-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.master-rim-light {
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 100px rgba(200, 168, 75, 0.2);
+  pointer-events: none;
+}
+
+/* ─── BLOCK 4: MINDSET & SIGNATURE ──────────────── */
+
+.block-mindset {
+  padding-bottom: 20rem;
+}
+
+.mindset-title {
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  margin-bottom: 5rem;
+}
+
+.mindset-statements {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  margin-bottom: 8rem;
+  max-width: 800px;
+}
+
+.mindset-line {
+  font-size: 1.35rem;
+  line-height: 1.6;
+  color: rgba(255, 251, 223, 0.6);
+  opacity: 0.8;
+}
+
+.elevation-sig {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+.sig-line-gold {
+  width: 80px;
+  height: 1px;
+  background: var(--about-accent);
+}
+
+.sig-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  letter-spacing: 0.35em;
+  color: rgba(255, 251, 223, 0.3);
+  text-transform: uppercase;
+}
+
+/* ─── Responsive ─────────────────────────── */
+
+@media (max-width: 1200px) {
+  .visual-section {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 4rem;
+  }
+  .visual-text {
+    align-items: center;
+  }
+  .lens-light { display: none; }
+  .about-elevation { cursor: default; }
+}
+
+@media (max-width: 768px) {
+  .narrative-block {
+    padding: 5rem 2rem;
+  }
+  .hero-statement-text { font-size: 2.8rem; }
+  .editorial-word { font-size: 2.5rem; }
+}
